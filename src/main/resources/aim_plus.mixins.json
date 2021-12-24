@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.flytre.aim_plus.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "client": [
+    "WorldRendererMixin", "MinecraftClientMixin", "KeyboardInputMixin", "GameOptionsMixin", "CameraAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
