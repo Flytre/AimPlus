@@ -133,7 +133,7 @@ public class Logic {
         if (capturedFrustum != null) {
             frustum = capturedFrustum;
         } else {
-            frustum = new Frustum(matrices.peek().getModel(), projection);
+            frustum = new Frustum(matrices.peek().getPositionMatrix(), projection);
             frustum.setPosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
         }
         USEFUL_ENTITIES.clear();
