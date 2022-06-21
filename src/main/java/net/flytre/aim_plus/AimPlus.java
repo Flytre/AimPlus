@@ -12,27 +12,31 @@ public class AimPlus implements ClientModInitializer {
 
 
     public static int sneakTime = 0;
+
+    public static int ticksToShot = 0;
+
     public static ConfigHandler<Config> CONFIG = new ConfigHandler<>(new Config(), "aim_plus","config.aim_plus");
 
     @Override
     public void onInitializeClient() {
 
-
-        Schedulers.everyMillisecond();
-
         ClientTickEvents.END_CLIENT_TICK.register(event -> {
-            if (!CONFIG.getConfig().enabled)
-                return;
+
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player == null)
                 return;
-            Logic.updateTargetedEntity();
-            Schedulers.startClientTick();
 
             if (player.isSneaking())
                 sneakTime++;
             else
                 sneakTime = 0;
+
+
+            if (!CONFIG.getConfig().enabled)
+                return;
+            Logic.updateTargetedEntity();
+            Schedulers.startClientTick();
+
         });
         ConfigRegistry.registerClientConfig(CONFIG);
         CONFIG.handle();

@@ -19,10 +19,8 @@ import java.util.Set;
 import java.util.stream.StreamSupport;
 
 public class Logic {
+    private static final List<Entity> USEFUL_ENTITIES = new ArrayList<>();
     public static Pair<Entity, Vec2f> TARGETED_ENTITY;
-
-    public static List<Entity> USEFUL_ENTITIES = new ArrayList<>();
-
 
     /**
      * Get the optimal change in yaw and pitch the source needs to do to face the target
@@ -82,14 +80,22 @@ public class Logic {
 
     public static MinMaxVec2f getLookingNeeded(Entity source, Entity target, boolean actual) {
         Config config = AimPlus.CONFIG.getConfig();
-        Vec3d sourceVector = source.getPos().add(0, source.getEyeHeight(source.getPose()), 0);
-        Vec2f min = new Vec2f(1000, 1000), max = new Vec2f(-1000, -1000);
-        Box targetBox = target.getBoundingBox();
 
         double dist = horizontalDistanceTo(source, target);
+
+        double leanTicks = dist / config.bulletSpeed.getSpeed();
+
+        Vec3d sourceVector = source.getPos().add(0, source.getEyeHeight(source.getPose()), 0);
+        Vec2f min = new Vec2f(1000, 1000), max = new Vec2f(-1000, -1000);
+
+        Box targetBox = target.getBoundingBox();
+        targetBox = targetBox.offset(target.getVelocity().multiply(leanTicks));
+
+
         double heightInc = actual ? config.dropoffAdjustment.getYIncrease(dist) : 0;
         double minY = targetBox.minY + heightInc;
         double maxY = targetBox.maxY + heightInc;
+
 
         double m = MathHelper.clamp(0.2 + dist / 60 * 0.3, 0.2, 0.48);
 
@@ -143,7 +149,7 @@ public class Logic {
                         entity != cameraEntity &&
                         entity.isAlive() &&
                         entity.shouldRender(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ()) &&
-                        (entity.ignoreCameraFrustum || frustum.isVisible(entity.getBoundingBox())) &&
+                        (entity.ignoreCameraFrustum || frustum.isVisible(entity.getBoundingBox()) || entity.distanceTo(cameraEntity) < 6) &&
                         !entity.isInvisible())
                 .forEach(USEFUL_ENTITIES::add);
         ((CameraAccessor) camera).setThirdPerson(val);
@@ -190,13 +196,13 @@ public class Logic {
             Vec2f acc = getOptimalVector(source, entity, true);
             Vec2f ideal = getOptimalVector(source, entity, false);
 
-            if (Math.abs(acc.x) > config.manualPrecision.getVal() || Math.abs(acc.y) > config.manualPrecision.getVal())
+            if (Math.abs(acc.x) > config.manualPrecision.getVal() || Math.abs(acc.y) > config.manualPrecision.getVal() * 1.5)
                 continue;
 
             Vec2f current = source.getRotationClient();
             source.setYaw(source.getYaw() + ideal.x);
             source.setPitch(source.getPitch() + ideal.y);
-            Set<Entity> result = EntityUtils.getEntitiesLookedAt(source, config.maxDistance);
+            Set<Entity> result = EntityUtils.getEntitiesLookedAt(source, config.maxDistance,config.ignoredBlocks);
             source.setYaw(current.y);
             source.setPitch(current.x);
 
@@ -210,9 +216,14 @@ public class Logic {
 
             float compareDist = dist;
             if (config.useHealthAsPriorityFactor && entity instanceof LivingEntity && closest instanceof LivingEntity) {
+
+
                 double percent = ((LivingEntity) entity).getHealth() / ((LivingEntity) closest).getHealth();
                 compareDist = (float) MathHelper.clamp(1 + (percent - 1) / 1.8f, 0.25f, 4f);
             }
+
+            if (config.sniperMode && source.distanceTo(entity) < 150) //favor nearby enemies quite strongly
+                compareDist *= 0.3;
 
             if (Logic.TARGETED_ENTITY != null && entity == Logic.TARGETED_ENTITY.getLeft()) {
                 dist *= config.targetSwitchCooldownEnabled ? 0.2 : 0.85;

@@ -1,5 +1,7 @@
 package net.flytre.aim_plus.config;
 
+import net.flytre.flytre_lib.api.config.annotation.MemberLocalizationFunction;
+
 import java.awt.*;
 
 
@@ -25,7 +27,6 @@ public enum Colors {
         float[] hsb = new float[3];
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
         float hue = hsb[0] * 360, saturation = hsb[1], brightness = hsb[2];
-        System.out.println(hue + " " + saturation + " " + brightness);
 
         if (saturation < 0.1 && brightness > 0.9)
             return WHITE;
@@ -58,6 +59,7 @@ public enum Colors {
 
     }
 
+    @MemberLocalizationFunction
     public String getKey() {
         return "aim_plus.color." + name;
     }

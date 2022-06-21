@@ -1,6 +1,7 @@
 package net.flytre.aim_plus.config;
 
 import net.flytre.aim_plus.AimPlus;
+import net.flytre.flytre_lib.api.config.annotation.MemberLocalizationFunction;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeableItem;
@@ -29,8 +30,10 @@ public enum PlayerFilterMode {
         this.shouldTrack = shouldTrack;
     }
 
+
+    @MemberLocalizationFunction
     public String getKey() {
-        return "aim_plus.filter_mode." + name;
+        return "aim_plus.player_filter_mode." + name;
     }
 
     public boolean test(PlayerEntity player) {

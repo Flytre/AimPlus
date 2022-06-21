@@ -11,16 +11,20 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-    maven { url "https://jitpack.io" }
+    mavenLocal()
+
+    maven {
+        name = 'Shedaniel'
+        url = "https://maven.shedaniel.me/"
+    }
 }
 
 dependencies {
-    // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "com.github.Flytre:FlytreLib:${project.lib_version}"
+    modImplementation("net.flytre.flytre_lib:flytre_lib-${project.minecraft_version}-fabric:${project.lib_version}")
 }
 
 processResources {

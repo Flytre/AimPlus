@@ -10,7 +10,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Key {
     public static KeyBinding TOGGLE_ENABLED;
-    public static KeyBinding TOGGLE_AUTO_FIRE;
+    public static KeyBinding TOGGLER_SNIPER_MODE;
     public static KeyBinding OPEN_CONFIG;
 
     public static void init() {
@@ -20,8 +20,8 @@ public class Key {
                 GLFW.GLFW_KEY_F8,
                 "category.aim_plus.main"
         ));
-        TOGGLE_AUTO_FIRE = KeyBindUtils.register(new KeyBinding(
-                "key.aim_plus.toggle_auto_fire",
+        TOGGLER_SNIPER_MODE = KeyBindUtils.register(new KeyBinding(
+                "key.aim_plus.toggle_sniper",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F9,
                 "category.aim_plus.main"
@@ -47,11 +47,11 @@ public class Key {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (TOGGLE_AUTO_FIRE.wasPressed()) {
-                AimPlus.CONFIG.getConfig().autoFire = !AimPlus.CONFIG.getConfig().autoFire;
-                String msg = AimPlus.CONFIG.getConfig().autoFire ? "§aTrue" : "§cFalse";
+            while (TOGGLER_SNIPER_MODE.wasPressed()) {
+                AimPlus.CONFIG.getConfig().sniperMode = !AimPlus.CONFIG.getConfig().sniperMode;
+                String msg = AimPlus.CONFIG.getConfig().sniperMode ? "§aTrue" : "§cFalse";
                 assert client.player != null;
-                client.player.sendMessage(Text.of("§2Auto Fire Enabled: " + msg), false);
+                client.player.sendMessage(Text.of("§2Sniper Mode Enabled: " + msg), false);
                 AimPlus.CONFIG.save(AimPlus.CONFIG.getConfig());
             }
         });

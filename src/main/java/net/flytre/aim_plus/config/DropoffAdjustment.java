@@ -1,5 +1,7 @@
 package net.flytre.aim_plus.config;
 
+import net.flytre.flytre_lib.api.config.annotation.MemberLocalizationFunction;
+
 import java.util.function.Function;
 
 public enum DropoffAdjustment {
@@ -29,6 +31,7 @@ public enum DropoffAdjustment {
         this.yIncrease = yIncrease;
     }
 
+    @MemberLocalizationFunction
     public String getKey() {
         return "aim_plus.dropoff_adjustment." + name;
     }

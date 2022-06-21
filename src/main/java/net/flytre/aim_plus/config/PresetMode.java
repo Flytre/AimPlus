@@ -1,6 +1,7 @@
 package net.flytre.aim_plus.config;
 
 import net.flytre.aim_plus.AimPlus;
+import net.flytre.flytre_lib.api.config.annotation.MemberLocalizationFunction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
@@ -26,7 +27,8 @@ public enum PresetMode {
         return predicate.test(e);
     }
 
+    @MemberLocalizationFunction
     public String getKey() {
-        return "aim_plus.preset_mode." + name;
+        return "aim_plus.mode." + name;
     }
 }
